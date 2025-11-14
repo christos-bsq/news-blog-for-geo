@@ -9,7 +9,7 @@ tags:
   - latency
   - rendering
   - bots
-indexable: false
+indexable: true
 experiment_type: mixed
 render_mode: mixed
 server_delay_ms: 600

@@ -7,12 +7,14 @@ type Experiment = {
   experiment_type: string;
   render_mode: string;
   server_delay_ms: number;
+  indexable: boolean;
 };
 
 const defaultExperiment: Experiment = {
   experiment_type: 'baseline',
   render_mode: 'ssr',
-  server_delay_ms: 0
+  server_delay_ms: 0,
+  indexable: true
 };
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -30,6 +32,11 @@ export default async function handler(request: Request, context: Context) {
   const response = await context.next();
   const headers = new Headers(response.headers);
   headers.set('X-Request-Id', requestId);
+
+  if (experiment.indexable === false) {
+    headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
+  }
+
   const nextResponse = new Response(response.body, {
     headers,
     status: response.status,

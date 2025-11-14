@@ -24,7 +24,8 @@ for (const relative of files) {
     title: data.title ?? slug,
     experiment_type: data.experiment_type ?? 'baseline',
     render_mode: data.render_mode ?? 'ssr',
-    server_delay_ms: Number(data.server_delay_ms ?? 0)
+    server_delay_ms: Number(data.server_delay_ms ?? 0),
+    indexable: data.indexable !== false
   };
 }
 

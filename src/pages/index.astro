@@ -12,10 +12,9 @@ import {
 import { slugify } from "@/utils/slugify";
 
 const posts = await getCollection("posts");
-const indexable = getIndexable(posts);
-const ordered = sortPosts(indexable);
-const categories = Array.from(getAllCategories(indexable).values());
-const tags = Array.from(getAllTags(indexable).values());
+const ordered = sortPosts(posts);
+const categories = Array.from(getAllCategories(posts).values());
+const tags = Array.from(getAllTags(posts).values());
 ---
 
 <BaseLayout>
