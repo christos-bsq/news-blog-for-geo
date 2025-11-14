@@ -1,0 +1,65 @@
+---
+import "../styles/global.css";
+import { AstroSeo } from "@astrolib/seo";
+import { SITE_DESCRIPTION, SITE_TITLE } from "@/lib/siteConfig";
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string | null;
+  canonical?: string | null;
+  indexable?: boolean;
+}
+
+const {
+  title = SITE_TITLE,
+  description = SITE_DESCRIPTION,
+  image = null,
+  canonical = null,
+  indexable = true,
+} = Astro.props as Props;
+
+const canonicalUrl =
+  canonical ?? (Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined);
+---
+<AstroSeo
+  title={title}
+  description={description}
+  canonical={canonicalUrl}
+  openGraph={{
+    url: canonicalUrl,
+    title,
+    description,
+    images: image
+      ? [
+          {
+            url: image,
+            width: 1200,
+            height: 630,
+            alt: description,
+            type: "image/jpeg",
+          },
+        ]
+      : [],
+    site_name: SITE_TITLE,
+    type: "article",
+    locale: "en_US",
+  }}
+  twitter={{
+    handle: "@signalnorth",
+    site: "@signalnorth",
+    cardType: "summary_large_image",
+  }}
+/>
+
+{!indexable && <meta name="robots" content="noindex, nofollow" />}
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="preconnect" href="https://rsms.me/" />
+<link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+<link
+  href="https://api.fontshare.com/v2/css?f[]=jet-brains-mono@1,2&display=swap"
+  rel="stylesheet"
+/>
+<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>

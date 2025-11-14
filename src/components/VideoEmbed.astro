@@ -1,0 +1,19 @@
+---
+interface Props {
+  url?: string | null;
+}
+
+const { url } = Astro.props;
+const showVideo = Boolean(url);
+---
+{showVideo && (
+  <div class="my-8 aspect-video w-full overflow-hidden rounded-3xl border border-base-200 bg-base-50">
+    <iframe
+      src={url!}
+      title="Experiment video"
+      loading="lazy"
+      allowfullscreen
+      class="h-full w-full"
+    ></iframe>
+  </div>
+)}

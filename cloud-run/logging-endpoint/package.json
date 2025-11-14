@@ -1,0 +1,16 @@
+{
+  "name": "news-blog-logging-ingest",
+  "version": "0.1.0",
+  "description": "Cloud Run endpoint that writes Netlify edge logs into BigQuery",
+  "main": "server.js",
+  "engines": {
+    "node": "^20"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@google-cloud/bigquery": "^7.5.0",
+    "express": "^4.19.2"
+  }
+}

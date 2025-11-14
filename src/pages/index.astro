@@ -1,0 +1,75 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PostCard from "@/components/PostCard.astro";
+import Cta from "@/components/global/Cta.astro";
+import { getCollection } from "astro:content";
+import {
+  getAllCategories,
+  getAllTags,
+  getIndexable,
+  sortPosts,
+} from "@/lib/postHelpers";
+import { slugify } from "@/utils/slugify";
+
+const posts = await getCollection("posts");
+const indexable = getIndexable(posts);
+const ordered = sortPosts(indexable);
+const categories = Array.from(getAllCategories(indexable).values());
+const tags = Array.from(getAllTags(indexable).values());
+---
+
+<BaseLayout>
+  <section class="py-10 md:py-16 space-y-8">
+    <div class="rounded-3xl border border-base-200 bg-base-50 p-8">
+      <p class="text-xs uppercase tracking-[0.4em] text-base-500">
+        Geo / Aeo Experiments
+      </p>
+      <h1 class="mt-4 text-4xl font-medium text-base-900 max-w-2xl text-balance">
+        Signal North Daily tracks how bots digest newsroom-style stories.
+      </h1>
+      <p class="mt-4 max-w-2xl text-base text-base-600">
+        Every article is a controlled crawl test. We vary structured data, rendering
+        modes, and latency under the hood while keeping the human-facing story intact.
+      </p>
+    </div>
+
+    <div class="grid gap-6 md:grid-cols-2">
+      {ordered.map((post) => (
+        <PostCard post={post} />
+      ))}
+    </div>
+  </section>
+
+  <section class="grid gap-6 md:grid-cols-2">
+    <div class="rounded-3xl border border-base-200 p-6">
+      <h2 class="text-xl font-semibold text-base-900">Categories</h2>
+      <ul class="mt-4 space-y-2 text-base-600">
+        {categories.map((item) => (
+          <li class="flex items-center justify-between gap-4 text-sm">
+            <a class="hover:text-blue-500" href={`/category/${slugify(item.label)}`}>
+              {item.label}
+            </a>
+            <span>{item.posts.length} posts</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="rounded-3xl border border-base-200 p-6">
+      <h2 class="text-xl font-semibold text-base-900">Popular tags</h2>
+      <div class="mt-4 flex flex-wrap gap-2 text-sm text-base-600">
+        {tags.map((item) => (
+          <a
+            href={`/tags/${slugify(item.label)}`}
+            class="rounded-full border border-base-200 px-3 py-1 hover:border-blue-400"
+          >
+            #{item.label}
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+  <div class="mt-12">
+    <Cta />
+  </div>
+</BaseLayout>
