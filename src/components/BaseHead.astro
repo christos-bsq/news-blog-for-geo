@@ -1,109 +1,65 @@
 ---
 import "../styles/global.css";
 import { AstroSeo } from "@astrolib/seo";
----
+import { SITE_DESCRIPTION, SITE_TITLE } from "@/lib/siteConfig";
 
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string | null;
+  canonical?: string | null;
+  indexable?: boolean;
+}
+
+const {
+  title = SITE_TITLE,
+  description = SITE_DESCRIPTION,
+  image = null,
+  canonical = null,
+  indexable = true,
+} = Astro.props as Props;
+
+const canonicalUrl =
+  canonical ?? (Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined);
+---
 <AstroSeo
-  title="Your Page Title"
-  description="A detailed description of your page content."
-  canonical="https://yoursite.com/current-page"
+  title={title}
+  description={description}
+  canonical={canonicalUrl}
   openGraph={{
-    url: "https://yoursite.com/current-page",
-    title: "Your Page Title",
-    description: "A detailed description of your page content.",
-    images: [
-      {
-        url: "https://yoursite.com/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Open Graph Image Alt",
-        type: "image/jpeg",
-      },
-    ],
-    site_name: "Your Site Name",
-    type: "website",
+    url: canonicalUrl,
+    title,
+    description,
+    images: image
+      ? [
+          {
+            url: image,
+            width: 1200,
+            height: 630,
+            alt: description,
+            type: "image/jpeg",
+          },
+        ]
+      : [],
+    site_name: SITE_TITLE,
+    type: "article",
     locale: "en_US",
   }}
   twitter={{
-    handle: "@yourhandle",
-    site: "@yoursite",
+    handle: "@signalnorth",
+    site: "@signalnorth",
     cardType: "summary_large_image",
   }}
 />
 
+{!indexable && <meta name="robots" content="noindex, nofollow" />}
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-<!-- Basic Meta Tags -->
-<title>Your Website Title</title>
-<meta
-  name="description"
-  content="A brief description of your website content."
-/>
-<meta name="keywords" content="keyword1, keyword2, keyword3" />
-<meta name="author" content="Your Name or Company Name" />
-
-<!-- Favicons -->
-<link rel="icon" href="/favicon.ico" sizes="any" />
-<link rel="icon" href="/icon.svg" type="image/svg+xml" />
-<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-<link rel="manifest" href="/manifest.webmanifest" />
-
-<!-- Favicon for IE -->
-<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
-
-<!-- Favicons for different sizes -->
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-<link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
-
-<!-- Open Graph / Facebook -->
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://www.yourwebsite.com/" />
-<meta property="og:title" content="Your Website Title" />
-<meta
-  property="og:description"
-  content="A brief description of your website content."
-/>
-<meta
-  property="og:image"
-  content="https://www.yourwebsite.com/path/to/image.jpg"
-/>
-
-<!-- Twitter -->
-<meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:url" content="https://www.yourwebsite.com/" />
-<meta property="twitter:title" content="Your Website Title" />
-<meta
-  property="twitter:description"
-  content="A brief description of your website content."
-/>
-<meta
-  property="twitter:image"
-  content="https://www.yourwebsite.com/path/to/image.jpg"
-/>
-
-<!-- Canonical URL -->
-<link rel="canonical" href="https://www.yourwebsite.com/" />
-
-<!-- Additional SEO -->
-<meta name="robots" content="index, follow" />
-<meta name="googlebot" content="index, follow" />
-
-<!-- Apple Touch Icon (already included in favicons, but keeping for backwards compatibility) -->
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-
-<!-- Theme Color for Mobile Browsers -->
-<meta name="theme-color" content="#ffffff" />
-
-<!-- For IE -->
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<!-- HTML in your document's head -->
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 <link rel="preconnect" href="https://rsms.me/" />
 <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
 <link
   href="https://api.fontshare.com/v2/css?f[]=jet-brains-mono@1,2&display=swap"
   rel="stylesheet"
 />
-
 <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>

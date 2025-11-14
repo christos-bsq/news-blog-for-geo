@@ -3,8 +3,8 @@
   class="relative flex flex-col w-full mx-auto rounded-xl md:rounded-full md:items-center md:justify-between md:flex-row"
 >
   <div class="flex flex-row items-center justify-between py-2 md:justify-start">
-    <a class="text-base font-medium tracking-tight uppercase" href="/">
-      microblog
+    <a class="text-base font-semibold tracking-tight uppercase" href="/">
+      Signal North Daily
     </a>
     <button
       @click="open = !open"
@@ -38,20 +38,16 @@
     class="flex-col justify-center flex-grow hidden py-12 md:py-0 md:flex md:items-end md:flex-row"
   >
     <div
-      class="items-center justify-center list-none space-y-2 md:space-y-0 md:ml-auto md:inline-flex md:text-left gap-3"
+      class="items-center justify-center list-none space-y-2 md:space-y-0 md:ml-auto md:inline-flex md:text-left gap-3 text-sm"
     >
-      <a
-        href="https://lexingtonthemes.com/"
-        class="text-base-900 hover:text-blue-500 text-sm"
-      >
-        More Astro Themes
+      <a href="/category/experiments" class="text-base-900 hover:text-blue-500">
+        Experiments
       </a>
-
-      <a
-        href="https://github.com/michael-andreuzza/microblog"
-        class="py-1.5 px-2.5 border focus:ring-2 h-7.5 text-sm rounded-full border-transparent bg-base-900 hover:bg-base-900/10 text-white duration-200 focus:ring-offset-2 focus:ring-white hover:text-base-900 inline-flex items-center justify-center ring-1 ring-transparent"
-      >
-        GitHub
+      <a href="/tags/geo" class="text-base-900 hover:text-blue-500">
+        Tags
+      </a>
+      <a href="/post/about-this-research" class="text-base-900 hover:text-blue-500">
+        About
       </a>
     </div>
   </nav>

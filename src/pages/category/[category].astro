@@ -1,0 +1,46 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { getCollection } from "astro:content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PostCard from "@/components/PostCard.astro";
+import { slugify } from "@/utils/slugify";
+import { sortPosts } from "@/lib/postHelpers";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("posts");
+  const map = new Map<string, { label: string; posts: CollectionEntry<"posts">[] }>();
+
+  for (const post of posts) {
+    const label = post.data.category;
+    const key = slugify(label);
+    const bucket = map.get(key) ?? { label, posts: [] };
+    bucket.posts.push(post);
+    map.set(key, bucket);
+  }
+
+  return Array.from(map.entries()).map(([slug, value]) => ({
+    params: { category: slug },
+    props: value,
+  }));
+}
+
+const { label, posts } = Astro.props as {
+  label: string;
+  posts: CollectionEntry<"posts">[];
+};
+
+const ordered = sortPosts(posts);
+---
+
+<BaseLayout title={`${label} Experiments | Signal North Daily`} description={`Stories filed under ${label}.`}>
+  <section class="space-y-4">
+    <h1 class="text-4xl font-semibold text-base-900">{label}</h1>
+    <p class="text-base text-base-600">{posts.length} posts in this category.</p>
+  </section>
+
+  <div class="mt-8 grid gap-6 md:grid-cols-2">
+    {ordered.map((post) => (
+      <PostCard post={post} />
+    ))}
+  </div>
+</BaseLayout>

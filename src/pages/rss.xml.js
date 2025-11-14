@@ -1,17 +1,21 @@
 import rss from "@astrojs/rss";
 import { getCollection } from "astro:content";
+import { SITE_DESCRIPTION, SITE_TITLE } from "@/lib/siteConfig";
+import { getIndexable, getPostSlug } from "@/lib/postHelpers";
 
-export async function get() {
-  const posts = await getCollection('posts');
+export async function GET() {
+  const posts = await getCollection("posts");
+  const visible = getIndexable(posts);
+
   return rss({
-    title: 'Astro Learner | Blog',
-    description: 'My journey learning Astro',
-    site: 'https://my-blog-site.netlify.app',
-    items: posts.map((post) => ({
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    site: "https://geo-aeo-experiments.netlify.app",
+    items: visible.map((post) => ({
       title: post.data.title,
-      pubDate: post.data.pubDate,
+      pubDate: post.data.date,
       description: post.data.description,
-      link: `/posts/${post.slug}/`,
+      link: `/post/${getPostSlug(post)}/`,
     })),
     customData: `<language>en-us</language>`,
   });

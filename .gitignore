@@ -1,0 +1,22 @@
+# Build output
+.astro/
+dist/
+
+# Dependencies
+node_modules/
+
+temp-microblog/
+legacy_prev/
+.netlify/
+
+# Generated data
+public/experiment-index.json
+netlify/edge-functions/experiment-index.json
+
+# Environment files
+.env
+.env.*
+
+# OS / editor files
+.DS_Store
+.vscode/

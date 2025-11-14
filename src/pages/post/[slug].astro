@@ -1,0 +1,27 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { getCollection } from "astro:content";
+import { marked } from "marked";
+import PostLayout from "@/layouts/PostLayout.astro";
+import { getPostSlug } from "@/lib/postHelpers";
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  return posts.map((post) => {
+    const slug = getPostSlug(post);
+    return {
+      params: { slug },
+      props: { post }
+    };
+  });
+}
+
+interface Props {
+  post: CollectionEntry<"posts">;
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+const htmlForClient = marked.parse(post.body ?? "");
+---
+<PostLayout post={post} Content={Content} htmlForClient={htmlForClient} />

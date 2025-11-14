@@ -7,7 +7,10 @@
         "title": {
           "type": "string"
         },
-        "pubDate": {
+        "description": {
+          "type": "string"
+        },
+        "date": {
           "anyOf": [
             {
               "type": "string",
@@ -23,45 +26,103 @@
             }
           ]
         },
-        "description": {
-          "type": "string"
-        },
-        "author": {
-          "type": "string"
-        },
-        "image": {
-          "type": "object",
-          "properties": {
-            "url": {
-              "type": "string"
+        "updated": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
             },
-            "alt": {
-              "type": "string"
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "integer",
+              "format": "unix-time"
             }
-          },
-          "required": [
-            "url",
-            "alt"
-          ],
-          "additionalProperties": false
+          ]
+        },
+        "category": {
+          "type": "string"
         },
         "tags": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "default": []
         },
+        "author": {
+          "type": "string",
+          "default": "Signal North Team"
+        },
+        "indexable": {
+          "type": "boolean",
+          "default": true
+        },
+        "experiment_type": {
+          "type": "string",
+          "enum": [
+            "baseline",
+            "jsonld",
+            "js_injected",
+            "mixed",
+            "slow"
+          ],
+          "default": "baseline"
+        },
+        "render_mode": {
+          "type": "string",
+          "enum": [
+            "ssr",
+            "js-only",
+            "mixed"
+          ],
+          "default": "ssr"
+        },
+        "server_delay_ms": {
+          "type": "number",
+          "minimum": 0,
+          "default": 0
+        },
+        "client_delay_ms": {
+          "type": "number",
+          "minimum": 0,
+          "default": 0
+        },
+        "image": {
+          "type": "string"
+        },
+        "image_alt": {
+          "type": "string"
+        },
+        "video_url": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "not": {}
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "json_ld": {},
         "$schema": {
           "type": "string"
         }
       },
       "required": [
         "title",
-        "pubDate",
         "description",
-        "author",
-        "image",
-        "tags"
+        "date",
+        "category"
       ],
       "additionalProperties": false
     }
