@@ -10,38 +10,83 @@
   <body>
     <div id="nc-root"></div>
     <script>
-      // For local development, use GitHub backend config
-      const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.includes('localhost');
+      // Detect local development (Astro dev server or netlify dev on localhost)
+      const isLocal = window.location.hostname === 'localhost' || 
+                      window.location.hostname === '127.0.0.1' ||
+                      window.location.hostname.includes('localhost');
       
       if (isLocal) {
-        // Use local config with GitHub backend
+        // For local development, use GitHub backend (no Netlify Identity needed)
+        // This allows login without setting up Netlify Identity locally
         window.CMS_MANUAL_INIT = true;
       }
+      // For production (netlify.app), let CMS auto-load config.yml with git-gateway
     </script>
+    <script src="https://unpkg.com/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
     <script src="https://unpkg.com/decap-cms@^3.0.16/dist/decap-cms.js"></script>
     <script>
-      if (window.CMS && window.CMS_MANUAL_INIT) {
-        // Load local config for development
-        fetch('/admin/config.local.yml')
-          .then(response => response.text())
-          .then(yamlText => {
-            // Decap CMS will auto-detect the config file, but we need to tell it which one
-            // Since we can't easily parse YAML in browser, we'll use a workaround
-            // by creating a script tag that loads the config
-            const script = document.createElement('script');
-            script.type = 'text/yaml';
-            script.id = 'cms-config';
-            script.textContent = yamlText;
-            document.head.appendChild(script);
-            
-            // Initialize CMS - it should find the config
-            window.CMS.init();
-          })
-          .catch(() => {
-            // Fallback to regular config
-            window.CMS.init();
-          });
-      }
+      (function() {
+        const isLocal = window.location.hostname === 'localhost' || 
+                        window.location.hostname === '127.0.0.1' ||
+                        window.location.hostname.includes('localhost');
+        
+        if (isLocal && window.CMS && window.jsyaml) {
+          // Wait a bit to ensure CMS is fully loaded
+          setTimeout(() => {
+            // Load config and override backend for local dev
+            fetch('/admin/config.yml')
+              .then(response => response.text())
+              .then(configText => {
+                const config = window.jsyaml.load(configText);
+                
+                // Override backend to use GitHub instead of git-gateway for local dev
+                config.backend = {
+                  name: 'github',
+                  repo: 'christos-bsq/news-blog-for-geo',
+                  branch: 'main'
+                };
+                
+                // Ensure collections is an array and not duplicated
+                if (!Array.isArray(config.collections)) {
+                  config.collections = [];
+                }
+                
+                // Remove any potential duplicates by name
+                const seen = new Set();
+                config.collections = config.collections.filter(collection => {
+                  if (!collection || !collection.name) return false;
+                  if (seen.has(collection.name)) {
+                    console.warn('Duplicate collection name found:', collection.name);
+                    return false;
+                  }
+                  seen.add(collection.name);
+                  return true;
+                });
+                
+                // Initialize CMS with modified config
+                window.CMS.init({ config });
+              })
+              .catch(err => {
+                console.error('Error loading config:', err);
+                // Fallback: initialize with basic GitHub config
+                window.CMS.init({
+                  config: {
+                    backend: {
+                      name: 'github',
+                      repo: 'christos-bsq/news-blog-for-geo',
+                      branch: 'main'
+                    },
+                    media_folder: 'public/uploads',
+                    public_folder: '/uploads',
+                    site_url: window.location.origin,
+                    collections: []
+                  }
+                });
+              });
+          }, 100);
+        }
+        // If not local, CMS will auto-load config.yml with git-gateway backend
+      })();
     </script>
   </body>
 </html>
