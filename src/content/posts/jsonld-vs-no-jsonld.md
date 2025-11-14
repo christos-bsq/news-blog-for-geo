@@ -26,7 +26,7 @@ json_ld:
   dateModified: 2024-05-02T13:00:00.000Z
   mainEntityOfPage:
     "@type": WebPage
-    "@id": https://geo-aeo-experiments.netlify.app/post/jsonld-vs-no-jsonld
+    "@id": https://signal-north-daily.netlify.app/post/jsonld-vs-no-jsonld
 ---
 The baseline for this run mirrors a normal newsroom brief. Each variant uses
 the exact same copy, hero image, and site chrome. The only difference is the

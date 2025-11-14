@@ -5,7 +5,7 @@ import { getPostSlug } from "@/lib/postHelpers";
 
 export const GET: APIRoute = async ({ site }) => {
   const posts = await getCollection("posts");
-  const origin = site?.toString() ?? "https://geo-aeo-experiments.netlify.app";
+  const origin = site?.toString() ?? "https://signal-north-daily.netlify.app";
   const indexablePosts = posts.filter((post) => post.data.indexable !== false);
 
   const categories = new Map<string, Date>();

@@ -6,8 +6,8 @@ backend:
 media_folder: public/uploads
 public_folder: /uploads
 
-site_url: https://geo-aeo-experiments.netlify.app
-logo_url: https://geo-aeo-experiments.netlify.app/uploads/jsonld-lab.jpg
+site_url: https://signal-north-daily.netlify.app
+logo_url: https://signal-north-daily.netlify.app/uploads/jsonld-lab.jpg
 
 collections:
   - name: posts
