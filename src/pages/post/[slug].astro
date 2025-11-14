@@ -22,6 +22,6 @@ interface Props {
 
 const { post } = Astro.props;
 const { Content } = await post.render();
-const htmlForClient = marked.parse(post.body ?? "");
+const htmlForClient = marked.parse(post.body.replace(/^---[\s\S]*?---/, ''));
 ---
 <PostLayout post={post} Content={Content} htmlForClient={htmlForClient} />

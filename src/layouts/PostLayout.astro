@@ -3,7 +3,7 @@ import type { CollectionEntry } from "astro:content";
 import BaseLayout from "./BaseLayout.astro";
 import HeroImage from "@/components/HeroImage.astro";
 import VideoEmbed from "@/components/VideoEmbed.astro";
-import ExperimentMeta from "@/components/ExperimentMeta.astro";
+
 import TagGroup from "@/components/TagGroup.astro";
 import { format } from "@/utils/date";
 import { getPostSlug } from "@/lib/postHelpers";
@@ -61,7 +61,14 @@ if (frontmatter.json_ld) {
 
     <HeroImage src={frontmatter.image} alt={frontmatter.image_alt} />
     <VideoEmbed url={frontmatter.video_url} />
-    <ExperimentMeta post={post} />
+    
+    <!--
+    <div style="border: 2px solid red; padding: 1rem; margin-top: 1rem;">
+      <h2>DEBUG: htmlForClient</h2>
+      <pre>{htmlForClient}</pre>
+    </div>
+    -->
+    
 
     {isSSR && (
       <div class="prose prose-base max-w-none text-lg leading-relaxed text-base-700">
@@ -89,7 +96,7 @@ if (frontmatter.json_ld) {
     {isJSOnly && (
       <div class="space-y-4">
         <p class="article-placeholder rounded-3xl border border-base-200 bg-base-50 p-5 text-base text-base-600">
-          The complete article is injected client-side for this experiment. Bots without rendering capability should
+          The complete article is injected client-side for this page. Bots without rendering capability should
           only see this placeholder.
         </p>
         <div
