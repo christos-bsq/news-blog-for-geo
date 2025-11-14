@@ -38,7 +38,7 @@ app.post('/', async (req, res) => {
   });
 
   try {
-    await bigquery.dataset(datasetId).table(tableId).insert(normalizedRows, { raw: true });
+    await bigquery.dataset(datasetId).table(tableId).insert(normalizedRows);
     return res.status(200).json({ inserted: normalizedRows.length });
   } catch (error) {
     console.error('BigQuery insert failed', error);
