@@ -41,14 +41,55 @@ app.post('/', async (req, res) => {
     await bigquery.dataset(datasetId).table(tableId).insert(normalizedRows);
     return res.status(200).json({ inserted: normalizedRows.length });
   } catch (error) {
-    console.error('BigQuery insert failed', error);
+    // Extract detailed error information from BigQuery PartialFailureError
+    const errorDetails = [];
     if (error?.errors) {
-      return res.status(400).json({
-        error: 'BigQuery insert partially failed',
-        details: error.errors
+      error.errors.forEach((err, idx) => {
+        const rowErrors = err.errors || [];
+        const rowData = err.row || {};
+        errorDetails.push({
+          rowIndex: idx,
+          row: rowData,
+          errors: rowErrors.map((e) => ({
+            message: e.message,
+            reason: e.reason,
+            location: e.location
+          }))
+        });
       });
     }
-    return res.status(500).json({ error: 'BigQuery insert failed' });
+    if (error?.response?.insertErrors) {
+      error.response.insertErrors.forEach((insertErr, idx) => {
+        const rowErrors = insertErr.errors || [];
+        errorDetails.push({
+          rowIndex: insertErr.index ?? idx,
+          errors: rowErrors.map((e) => ({
+            message: e.message,
+            reason: e.reason,
+            location: e.location
+          }))
+        });
+      });
+    }
+
+    // Log detailed error information
+    console.error('BigQuery insert failed', {
+      errorName: error.name,
+      errorMessage: error.message,
+      errorDetails: JSON.stringify(errorDetails, null, 2),
+      normalizedRows: JSON.stringify(normalizedRows, null, 2)
+    });
+
+    if (errorDetails.length > 0) {
+      return res.status(400).json({
+        error: 'BigQuery insert partially failed',
+        details: errorDetails
+      });
+    }
+    return res.status(500).json({
+      error: 'BigQuery insert failed',
+      message: error.message
+    });
   }
 });
 
