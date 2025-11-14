@@ -1,0 +1,109 @@
+---
+backend:
+  name: github
+  repo: christos-bsq/news-blog-for-geo
+  branch: main
+
+media_folder: public/uploads
+public_folder: /uploads
+
+site_url: http://localhost:8888
+logo_url: http://localhost:8888/uploads/jsonld-lab.jpg
+
+collections:
+  - name: posts
+    label: Posts
+    folder: src/content/posts
+    create: true
+    slug: "{{slug}}"
+    preview_path: post/{{slug}}
+    fields:
+      - label: Title
+        name: title
+        widget: string
+      - label: Hero Image
+        name: image
+        widget: image
+        required: false
+      - label: Hero Image Alt Text
+        name: image_alt
+        widget: string
+        required: false
+      - label: Video URL
+        name: video_url
+        widget: string
+        required: false
+      - label: Description
+        name: description
+        widget: text
+      - label: Publish Date
+        name: date
+        widget: datetime
+      - label: Updated
+        name: updated
+        widget: datetime
+        required: false
+      - label: Slug
+        name: slug
+        widget: string
+      - label: Category
+        name: category
+        widget: string
+      - label: Tags
+        name: tags
+        widget: list
+        default: []
+      - label: Indexable
+        name: indexable
+        widget: boolean
+        default: true
+        required: false
+      - label: Experiment Type
+        name: experiment_type
+        widget: select
+        options:
+          - label: Baseline
+            value: baseline
+          - label: JSON-LD
+            value: jsonld
+          - label: JS Injected
+            value: js_injected
+          - label: Mixed
+            value: mixed
+          - label: Slow
+            value: slow
+        default: baseline
+      - label: Render Mode
+        name: render_mode
+        widget: select
+        options:
+          - label: SSR
+            value: ssr
+          - label: JS Only
+            value: js-only
+          - label: Mixed
+            value: mixed
+        default: ssr
+      - label: Server Delay (ms)
+        name: server_delay_ms
+        widget: number
+        default: 0
+        required: false
+      - label: Client Delay (ms)
+        name: client_delay_ms
+        widget: number
+        default: 0
+        required: false
+      - label: JSON-LD
+        name: json_ld
+        widget: code
+        default: ''
+        required: false
+        allow_language_selection: false
+        language: json
+        output_code_only: true
+        hint: "Paste valid JSON-LD. Leave blank to disable."
+      - label: Body
+        name: body
+        widget: markdown
+

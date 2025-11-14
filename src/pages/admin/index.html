@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Signal North Daily CMS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="google-site-verification" content="P8CN1vel-b-I7G-TkuQt5GSR_Zoh16Xcnrn0rFTD5mY" />
+    <link rel="stylesheet" href="https://unpkg.com/@decapcms/editor-component-textarea@^3.0.0/dist/index.css" />
+  </head>
+  <body>
+    <div id="nc-root"></div>
+    <script>
+      // For local development, use GitHub backend config
+      const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.includes('localhost');
+      
+      if (isLocal) {
+        // Use local config with GitHub backend
+        window.CMS_MANUAL_INIT = true;
+      }
+    </script>
+    <script src="https://unpkg.com/decap-cms@^3.0.16/dist/decap-cms.js"></script>
+    <script>
+      if (window.CMS && window.CMS_MANUAL_INIT) {
+        // Load local config for development
+        fetch('/admin/config.local.yml')
+          .then(response => response.text())
+          .then(yamlText => {
+            // Decap CMS will auto-detect the config file, but we need to tell it which one
+            // Since we can't easily parse YAML in browser, we'll use a workaround
+            // by creating a script tag that loads the config
+            const script = document.createElement('script');
+            script.type = 'text/yaml';
+            script.id = 'cms-config';
+            script.textContent = yamlText;
+            document.head.appendChild(script);
+            
+            // Initialize CMS - it should find the config
+            window.CMS.init();
+          })
+          .catch(() => {
+            // Fallback to regular config
+            window.CMS.init();
+          });
+      }
+    </script>
+  </body>
+</html>
+
