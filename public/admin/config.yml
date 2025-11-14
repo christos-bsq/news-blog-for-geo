@@ -96,12 +96,12 @@ collections:
       - label: JSON-LD
         name: json_ld
         widget: code
-        default: ''
+        default: null
         required: false
         allow_language_selection: false
-        language: json
-        output_code_only: true
-        hint: "Paste valid JSON-LD. Leave blank to disable."
+        language: yaml
+        output_code_only: false
+        hint: "Paste valid YAML for JSON-LD structured data. Leave blank to disable."
       - label: Body
         name: body
         widget: markdown
