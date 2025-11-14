@@ -62,6 +62,13 @@ if (frontmatter.json_ld) {
     <HeroImage src={frontmatter.image} alt={frontmatter.image_alt} />
     <VideoEmbed url={frontmatter.video_url} />
     
+    <!--
+    <div style="border: 2px solid red; padding: 1rem; margin-top: 1rem;">
+      <h2>DEBUG: htmlForClient</h2>
+      <pre>{htmlForClient}</pre>
+    </div>
+    -->
+    
 
     {isSSR && (
       <div class="prose prose-base max-w-none text-lg leading-relaxed text-base-700">
