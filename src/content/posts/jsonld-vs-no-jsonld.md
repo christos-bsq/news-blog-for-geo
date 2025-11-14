@@ -14,8 +14,8 @@ experiment_type: jsonld
 render_mode: ssr
 server_delay_ms: 0
 client_delay_ms: 0
-image: /uploads/jsonld-lab.jpg
-image_alt: Analysts reviewing schema coverage
+# image: /uploads/jsonld-lab.jpg
+# image_alt: Analysts reviewing schema coverage
 video_url: https://www.youtube.com/embed/dQw4w9WgXcQ
 json_ld:
   "@context": https://schema.org
