@@ -1,0 +1,43 @@
+---
+import BaseLayout from '@/layouts/BaseLayout'
+import ListPosts from '@/components/ListPosts'
+import ListCategories from '@/components/ListCategories'
+import TitlePage from '@/components/TitlePage'
+import Pagination from '@/components/Pagination'
+import { getCategories, getPostsByCategory } from '@/utils'
+import { siteConfig } from '@/data/site.config'
+import { slugify } from '@/utils/slugify'
+
+export async function getStaticPaths({ paginate }: any) {
+	const categories = await getCategories()
+
+	const pages = await Promise.all(
+		categories.map(async (category: string) => {
+			const filteredPosts = await getPostsByCategory(category)
+			return paginate(filteredPosts, {
+				params: {
+					category: slugify(category)
+				},
+				pageSize: siteConfig.paginationSize
+			})
+		})
+	)
+
+	return pages.flat()
+}
+
+const params = Astro.params
+const { page } = Astro.props
+const posts = page.data
+const activeCategory = params.category ?? ''
+const categories = await getCategories()
+const categoryName =
+	categories.find((category) => slugify(category) === activeCategory) ?? activeCategory
+---
+
+<BaseLayout title={categoryName}>
+	<TitlePage title={categoryName} />
+	<ListCategories activeCategory={params.category} />
+	<ListPosts posts={posts} />
+	<Pagination page={page} />
+</BaseLayout>

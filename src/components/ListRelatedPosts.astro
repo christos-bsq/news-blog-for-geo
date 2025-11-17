@@ -1,0 +1,42 @@
+---
+import type { CollectionEntry } from 'astro:content'
+import { cn, getPostSlug } from '@/utils'
+
+type Props = {
+	posts: CollectionEntry<'posts'>[]
+}
+
+const { posts } = Astro.props as Props
+---
+
+<section class={cn(`flex flex-col md:flex-row sm:justify-between gap-8`)}>
+	{
+		posts.length > 0 ? (
+			posts.map((post) => {
+				const heroImage = post.data.image ?? '/project.png'
+				const imageAlt = post.data.image_alt ?? post.data.title
+				return (
+					<div class='flex flex-wrap gap-2'>
+						<div class='min-h-full'>
+							<img
+								src={heroImage}
+								width={80}
+								height={80}
+								class='h-16 w-16 rounded-full object-cover'
+								alt={imageAlt}
+								loading='lazy'
+							/>
+						</div>
+						<header class='flex justify-center items-center'>
+							<a class='font-medium hover:underline' href={`/post/${getPostSlug(post)}/`}>
+								{post.data.title}
+							</a>
+						</header>
+					</div>
+				)
+			})
+		) : (
+			<span class='text-gray-500'>There are no related posts yet.</span>
+		)
+	}
+</section>

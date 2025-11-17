@@ -43,7 +43,14 @@
           ]
         },
         "category": {
-          "type": "string"
+          "type": "string",
+          "enum": [
+            "Experiments",
+            "Rendering",
+            "Briefings",
+            "Playbooks",
+            "Notes"
+          ]
         },
         "tags": {
           "type": "array",
@@ -114,6 +121,10 @@
           ]
         },
         "json_ld": {},
+        "draft": {
+          "type": "boolean",
+          "default": false
+        },
         "$schema": {
           "type": "string"
         }

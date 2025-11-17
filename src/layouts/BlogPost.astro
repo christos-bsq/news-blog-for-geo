@@ -1,0 +1,201 @@
+---
+import type { CollectionEntry } from 'astro:content'
+import type { MarkdownHeading } from 'astro'
+import BaseLayout from '@/layouts/BaseLayout'
+import FormattedDate from '@/components/FormattedDate'
+import Tag from '@/components/Tag'
+import ExperimentChips from '@/components/ExperimentChips.astro'
+import ListRelatedPosts from '@/components/ListRelatedPosts'
+import Share from '@/components/Share'
+import TableOfContents from '@/components/TableOfContents'
+import VideoEmbed from '@/components/VideoEmbed.astro'
+import Disqus from '@/components/Disqus'
+import { disqusConfig } from '@/data/disqus.config'
+import { getRelatedPosts, getPostSlug } from '@/utils'
+
+type Props = {
+	post: CollectionEntry<'posts'>
+	Content: any
+	headings: MarkdownHeading[]
+	readTime: string
+	htmlForClient: string
+}
+
+const { post, Content, headings, readTime, htmlForClient } = Astro.props as Props
+const experiment = post.data
+const slug = getPostSlug(post)
+const isSSR = experiment.render_mode === 'ssr'
+const isMixed = experiment.render_mode === 'mixed'
+const isJSOnly = experiment.render_mode === 'js-only'
+const safePayload = JSON.stringify({ html: htmlForClient ?? '' }).replace(/<\/(script)/gi, '<\\/$1>')
+const published = experiment.date
+const updated = experiment.updated
+const articleDate = published.toISOString()
+
+const canonicalUrl = Astro.site ? new URL(`/post/${slug}/`, Astro.site).href : null
+
+let jsonLdString: string | null = null
+if (experiment.json_ld) {
+	if (typeof experiment.json_ld === 'string') {
+		try {
+			jsonLdString = JSON.stringify(JSON.parse(experiment.json_ld))
+		} catch {
+			jsonLdString = experiment.json_ld
+		}
+	} else {
+		jsonLdString = JSON.stringify(experiment.json_ld)
+	}
+}
+
+const relatedPosts = await getRelatedPosts(post)
+const disqusEnabled = disqusConfig.enabled
+---
+
+<BaseLayout
+	title={`${experiment.title} | ${experiment.category}`}
+	description={experiment.description}
+	image={experiment.image}
+	articleDate={articleDate}
+	canonical={canonicalUrl}
+	indexable={experiment.indexable}
+>
+	<article class='min-w-full py-6'>
+		<header class='flex flex-col gap-6 text-center'>
+			<div class='flex flex-col gap-2 text-sm text-zinc-500 dark:text-zinc-400'>
+				<div class='flex flex-col items-center justify-center gap-2 text-xs md:flex-row md:gap-4'>
+					<span class='uppercase tracking-[0.4em] text-indigo-500'>{experiment.category}</span>
+					<ul class='flex flex-wrap items-center justify-center gap-2 uppercase tracking-wide text-zinc-500 dark:text-zinc-400'>
+						<li class='flex items-center gap-1'>
+							<span>Published</span>
+							<FormattedDate date={published} />
+						</li>
+						{updated && (
+							<li class='flex items-center gap-1'>
+								<span>· Updated</span>
+								<FormattedDate date={updated} />
+							</li>
+						)}
+						<li>· {readTime}</li>
+					</ul>
+				</div>
+				{jsonLdString && (
+					<script type='application/ld+json' set:html={jsonLdString}>
+					</script>
+				)}
+			</div>
+			<h1 class='text-4xl font-semibold leading-tight text-zinc-900 dark:text-white md:text-6xl'>
+				{experiment.title}
+			</h1>
+			<p class='text-lg text-zinc-600 dark:text-zinc-300 md:text-xl'>{experiment.description}</p>
+			<div class='flex flex-wrap justify-center gap-3'>
+				{experiment.tags.map((tag) => (
+					<Tag tag={tag} />
+				))}
+			</div>
+			<ExperimentChips
+				renderMode={experiment.render_mode}
+				experimentType={experiment.experiment_type}
+				serverDelay={experiment.server_delay_ms}
+				clientDelay={experiment.client_delay_ms}
+				className='justify-center'
+			/>
+		</header>
+
+		{experiment.image && (
+			<img
+				src={experiment.image}
+				alt={experiment.image_alt ?? experiment.title}
+				class='my-8 h-full w-full rounded-3xl object-cover shadow-lg'
+				loading='lazy'
+			/>
+		)}
+
+		<VideoEmbed url={experiment.video_url} />
+
+		<section class='mt-10 grid grid-cols-1 gap-10 md:grid-cols-[280px_1fr]'>
+			<aside class='flex flex-col gap-8'>
+				<Share />
+				<div class='sticky top-24 rounded-2xl border border-zinc-200/60 bg-white/60 p-4 shadow-sm dark:border-zinc-800 dark:bg-[#14121d]'>
+					<h2 class='text-sm font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400'>
+						Experiment settings
+					</h2>
+					<ul class='mt-3 space-y-1 text-sm text-zinc-600 dark:text-zinc-300'>
+						<li>Server delay: {experiment.server_delay_ms ?? 0} ms</li>
+						<li>Client delay: {experiment.client_delay_ms ?? 0} ms</li>
+						<li>Render mode: {experiment.render_mode}</li>
+						<li>Type: {experiment.experiment_type}</li>
+						<li>Indexable: {experiment.indexable ? 'Yes' : 'No'}</li>
+					</ul>
+				</div>
+				{headings?.length > 0 && (
+					<div class='sticky top-52 rounded-2xl border border-zinc-200/60 bg-white/60 p-4 shadow-sm dark:border-zinc-800 dark:bg-[#14121d]'>
+						<TableOfContents headings={headings} />
+					</div>
+				)}
+			</aside>
+
+			<div class='flex flex-col gap-6'>
+				{isSSR && (
+					<div class='prose prose-lg max-w-none dark:prose-invert'>
+						<Content />
+					</div>
+				)}
+
+				{isMixed && (
+					<div class='space-y-4'>
+						<div class='rounded-3xl border border-zinc-200 bg-zinc-50 p-5 text-sm text-zinc-600 dark:border-zinc-700 dark:bg-[#15141f] dark:text-zinc-300'>
+							<p class='font-semibold text-zinc-900 dark:text-white'>SSR intro</p>
+							<p class='mt-2'>{experiment.description}</p>
+						</div>
+						<div
+							id='article-js'
+							class='prose prose-lg max-w-none text-zinc-800 dark:prose-invert'
+							data-slug={slug}
+							data-experiment-type={experiment.experiment_type}
+							data-client-delay-ms={experiment.client_delay_ms ?? 0}
+							data-render-mode={experiment.render_mode}
+						></div>
+					</div>
+				)}
+
+				{isJSOnly && (
+					<div class='space-y-4'>
+						<p class='rounded-3xl border border-dashed border-zinc-300 bg-zinc-50 p-5 text-sm text-zinc-600 dark:border-zinc-800 dark:bg-[#15141f] dark:text-zinc-300'>
+							This page hides the body copy from bots that skip client rendering. Only the placeholder above
+							is server-rendered.
+						</p>
+						<div
+							id='article-js'
+							class='prose prose-lg max-w-none text-zinc-800 dark:prose-invert'
+							data-slug={slug}
+							data-experiment-type={experiment.experiment_type}
+							data-client-delay-ms={experiment.client_delay_ms ?? 0}
+							data-render-mode={experiment.render_mode}
+						></div>
+					</div>
+				)}
+
+				{(isMixed || isJSOnly) && (
+					<>
+						<script type='application/json' id='post-content' data-slug={slug} data-render-mode={experiment.render_mode}>
+							{safePayload}
+						</script>
+						<script is:inline type='module'>
+							import initExperiments from '@/scripts/experiments.ts'
+							initExperiments()
+						</script>
+					</>
+				)}
+			</div>
+		</section>
+
+		<footer class='mt-16 space-y-10'>
+			<div>
+				<h2 class='text-xl font-semibold text-zinc-900 dark:text-white'>Related experiments</h2>
+				<ListRelatedPosts posts={relatedPosts} />
+			</div>
+
+			{disqusEnabled && <Disqus />}
+		</footer>
+	</article>
+</BaseLayout>

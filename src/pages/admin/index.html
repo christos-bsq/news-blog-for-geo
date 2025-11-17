@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Signal North Daily CMS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="google-site-verification" content="P8CN1vel-b-I7G-TkuQt5GSR_Zoh16Xcnrn0rFTD5mY" />
+    <link rel="stylesheet" href="https://unpkg.com/@decapcms/editor-component-textarea@^3.0.0/dist/index.css" />
+  </head>
+  <body>
+    <div id="nc-root"></div>
+    <script>
+      const isLocal =
+        window.location.hostname === 'localhost' ||
+        window.location.hostname === '127.0.0.1' ||
+        window.location.hostname.includes('localhost');
+
+      if (isLocal) {
+        window.CMS_MANUAL_INIT = true;
+      }
+    </script>
+    <script src="https://unpkg.com/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+    <script src="https://unpkg.com/decap-cms@^3.0.16/dist/decap-cms.js"></script>
+    <script>
+      ;(() => {
+        const isLocal =
+          window.location.hostname === 'localhost' ||
+          window.location.hostname === '127.0.0.1' ||
+          window.location.hostname.includes('localhost');
+
+        if (isLocal && window.CMS && window.jsyaml) {
+          setTimeout(() => {
+            fetch('/admin/config.yml')
+              .then((response) => response.text())
+              .then((configText) => {
+                const config = window.jsyaml.load(configText)
+
+                config.backend = {
+                  name: 'github',
+                  repo: 'christos-bsq/news-blog-for-geo',
+                  branch: 'main'
+                }
+
+                if (!Array.isArray(config.collections)) {
+                  config.collections = []
+                }
+
+                const seen = new Set()
+                config.collections = config.collections.filter((collection) => {
+                  if (!collection || !collection.name) return false
+                  if (seen.has(collection.name)) {
+                    console.warn('Duplicate collection name found:', collection.name)
+                    return false
+                  }
+                  seen.add(collection.name)
+                  return true
+                })
+
+                window.CMS.init({ config })
+              })
+              .catch((err) => {
+                console.error('Error loading config:', err)
+                window.CMS.init({
+                  config: {
+                    backend: {
+                      name: 'github',
+                      repo: 'christos-bsq/news-blog-for-geo',
+                      branch: 'main'
+                    },
+                    media_folder: 'public/uploads',
+                    public_folder: '/uploads',
+                    site_url: window.location.origin,
+                    collections: []
+                  }
+                })
+              })
+          }, 100)
+        }
+      })()
+    </script>
+  </body>
+</html>

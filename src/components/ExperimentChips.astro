@@ -1,0 +1,31 @@
+---
+interface Props {
+	renderMode: string
+	experimentType: string
+	serverDelay?: number
+	clientDelay?: number
+	className?: string
+}
+
+const { renderMode, experimentType, serverDelay = 0, clientDelay = 0, className = '' } = Astro.props
+
+const badges = [
+	{ label: `Render: ${renderMode}`, key: 'render' },
+	{ label: `Experiment: ${experimentType}`, key: 'experiment' },
+	serverDelay > 0 ? { label: `Server +${serverDelay}ms`, key: 'server-delay' } : null,
+	clientDelay > 0 ? { label: `Client +${clientDelay}ms`, key: 'client-delay' } : null
+].filter(Boolean) as { label: string; key: string }[]
+---
+
+<div class={`flex flex-wrap gap-2 text-xs uppercase tracking-wide ${className}`}>
+	{
+		badges.map((badge) => (
+			<span
+				class='rounded-full bg-zinc-200/80 px-3 py-1 font-semibold text-zinc-800 dark:bg-zinc-800/70 dark:text-white'
+				data-badge-key={badge.key}
+			>
+				{badge.label}
+			</span>
+		))
+	}
+</div>
