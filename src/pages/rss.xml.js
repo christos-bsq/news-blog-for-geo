@@ -10,7 +10,7 @@ export async function GET() {
   return rss({
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
-    site: "https://geo-aeo-experiments.netlify.app",
+    site: "https://signal-north-daily.netlify.app",
     items: visible.map((post) => ({
       title: post.data.title,
       pubDate: post.data.date,
