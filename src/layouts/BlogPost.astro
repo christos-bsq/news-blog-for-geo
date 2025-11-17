@@ -104,27 +104,15 @@ const disqusEnabled = disqusConfig.enabled
 
 		<VideoEmbed url={experiment.video_url} />
 
-		<section class='mt-10 grid grid-cols-1 gap-10 md:grid-cols-[280px_1fr]'>
-			<aside class='flex flex-col gap-8'>
-				<Share />
-				<div class='sticky top-24 rounded-2xl border border-zinc-200/60 bg-white/60 p-4 shadow-sm dark:border-zinc-800 dark:bg-[#14121d]'>
-					<h2 class='text-sm font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400'>
-						Experiment settings
-					</h2>
-					<ul class='mt-3 space-y-1 text-sm text-zinc-600 dark:text-zinc-300'>
-						<li>Server delay: {experiment.server_delay_ms ?? 0} ms</li>
-						<li>Client delay: {experiment.client_delay_ms ?? 0} ms</li>
-						<li>Render mode: {experiment.render_mode}</li>
-						<li>Type: {experiment.experiment_type}</li>
-						<li>Indexable: {experiment.indexable ? 'Yes' : 'No'}</li>
-					</ul>
-				</div>
-				{headings?.length > 0 && (
-					<div class='sticky top-52 rounded-2xl border border-zinc-200/60 bg-white/60 p-4 shadow-sm dark:border-zinc-800 dark:bg-[#14121d]'>
-						<TableOfContents headings={headings} />
-					</div>
-				)}
-			</aside>
+			<section class='mt-10 grid grid-cols-1 gap-10 md:grid-cols-[280px_1fr]'>
+				<aside class='flex flex-col gap-8'>
+					<Share />
+					{headings?.length > 0 && (
+						<div class='sticky top-24 rounded-2xl border border-zinc-200/60 bg-white/60 p-4 shadow-sm dark:border-zinc-800 dark:bg-[#14121d]'>
+							<TableOfContents headings={headings} />
+						</div>
+					)}
+				</aside>
 
 			<div class='flex flex-col gap-6'>
 				{isSSR && (
