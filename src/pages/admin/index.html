@@ -9,28 +9,70 @@
   </head>
   <body>
     <div id="nc-root"></div>
+    <button id="identity-login" type="button" style="margin: 1rem; padding: 0.5rem 1rem;">
+      Log in with Netlify Identity
+    </button>
     <script>
       // Detect local development (Astro dev server or netlify dev on localhost)
-      const isLocal = window.location.hostname === 'localhost' || 
-                      window.location.hostname === '127.0.0.1' ||
-                      window.location.hostname.includes('localhost');
+      const isLocalHost = window.location.hostname === 'localhost' || 
+                          window.location.hostname === '127.0.0.1' ||
+                          window.location.hostname.includes('localhost');
+      // Treat Astro's dev server (e.g. :4321) as "local GitHub backend".
+      // Netlify Dev defaults to :8888 and should behave like production (git-gateway).
+      const useGithubBackend = isLocalHost && window.location.port !== '8888';
       
-      if (isLocal) {
+      if (useGithubBackend) {
         // For local development, use GitHub backend (no Netlify Identity needed)
         // This allows login without setting up Netlify Identity locally
         window.CMS_MANUAL_INIT = true;
       }
       // For production (netlify.app), let CMS auto-load config.yml with git-gateway
     </script>
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <script>
+      const hasInviteToken = () => {
+        const searchParams = new URLSearchParams(window.location.search);
+        if (searchParams.has('invite_token')) {
+          return true;
+        }
+        const hash = window.location.hash.startsWith('#')
+          ? window.location.hash.slice(1)
+          : window.location.hash;
+        if (!hash) {
+          return false;
+        }
+        const hashParams = new URLSearchParams(hash);
+        return hashParams.has('invite_token');
+      };
+
+      if (window.netlifyIdentity) {
+        const loginButton = document.getElementById('identity-login');
+        loginButton?.addEventListener('click', () => {
+          window.netlifyIdentity.open('login');
+        });
+
+        // Reload CMS when auth status changes so Decap sees the new token.
+        window.netlifyIdentity.on('login', () => window.location.reload());
+        window.netlifyIdentity.on('logout', () => window.location.reload());
+
+        // Handy for invite links: auto-open login if invite_token is present.
+        window.netlifyIdentity.on('init', (user) => {
+          if (!user && hasInviteToken()) {
+            window.netlifyIdentity.open('login');
+          }
+        });
+      }
+    </script>
     <script src="https://unpkg.com/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
     <script src="https://unpkg.com/decap-cms@^3.0.16/dist/decap-cms.js"></script>
     <script>
       (function() {
-        const isLocal = window.location.hostname === 'localhost' || 
-                        window.location.hostname === '127.0.0.1' ||
-                        window.location.hostname.includes('localhost');
-        
-        if (isLocal && window.CMS && window.jsyaml) {
+        const isLocalHost = window.location.hostname === 'localhost' || 
+                            window.location.hostname === '127.0.0.1' ||
+                            window.location.hostname.includes('localhost');
+        const useGithubBackend = isLocalHost && window.location.port !== '8888';
+
+        if (useGithubBackend && window.CMS && window.jsyaml) {
           // Wait a bit to ensure CMS is fully loaded
           setTimeout(() => {
             // Load config and override backend for local dev
@@ -90,4 +132,3 @@
     </script>
   </body>
 </html>
-

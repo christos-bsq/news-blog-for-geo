@@ -15,15 +15,21 @@
         "npm:@astrojs/netlify@^6.6.0",
         "npm:@astrojs/rss@^4.0.12",
         "npm:@astrojs/sitemap@^3.4.1",
-        "npm:@astrolib/seo@^1.0.0-beta.8",
-        "npm:@tailwindcss/forms@~0.5.10",
+        "npm:@astrojs/tailwind@^5.1.0",
+        "npm:@pagefind/default-ui@^1.0.4",
         "npm:@tailwindcss/typography@~0.5.16",
-        "npm:@tailwindcss/vite@^4.1.10",
+        "npm:astro-font@^0.0.72",
         "npm:astro@^5.9.3",
+        "npm:clsx@^2.1.1",
         "npm:fast-glob@^3.3.2",
         "npm:gray-matter@^4.0.3",
         "npm:marked@^12.0.2",
-        "npm:tailwindcss@^4.1.10"
+        "npm:mdast-util-to-string@4",
+        "npm:motion@^10.16.4",
+        "npm:pagefind@^1.0.4",
+        "npm:reading-time@^1.5.0",
+        "npm:tailwind-merge@^2.5.2",
+        "npm:tailwindcss@^3.4.13"
       ]
     }
   }
