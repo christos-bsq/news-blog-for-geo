@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
 import { getCollection } from "astro:content";
 import { slugify } from "@/utils/slugify";
-import { getPostSlug } from "@/lib/postHelpers";
+import { getPostSlug } from "@/utils";
 
 export const GET: APIRoute = async ({ site }) => {
   const posts = await getCollection("posts");
