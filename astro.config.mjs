@@ -10,7 +10,7 @@ const isPreviewCommand =
   process.argv.some((arg) => arg.includes("preview"));
 
 export default defineConfig({
-  site: "https://geo-aeo-experiments.netlify.app",
+  site: "https://signal-north-daily.netlify.app",
   ...(isPreviewCommand ? {} : { adapter: netlify() }),
   output: "static",
   vite: {
