@@ -9,6 +9,9 @@
   </head>
   <body>
     <div id="nc-root"></div>
+    <button id="identity-login" type="button" style="margin: 1rem; padding: 0.5rem 1rem;">
+      Log in with Netlify Identity
+    </button>
     <script>
       // Detect local development (Astro dev server or netlify dev on localhost)
       const isLocal = window.location.hostname === 'localhost' || 
@@ -21,6 +24,29 @@
         window.CMS_MANUAL_INIT = true;
       }
       // For production (netlify.app), let CMS auto-load config.yml with git-gateway
+    </script>
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <script>
+      if (window.netlifyIdentity) {
+        const loginButton = document.getElementById('identity-login');
+        loginButton?.addEventListener('click', () => {
+          window.netlifyIdentity.open('login');
+        });
+
+        // Reload CMS when auth status changes so Decap sees the new token.
+        window.netlifyIdentity.on('login', () => window.location.reload());
+        window.netlifyIdentity.on('logout', () => window.location.reload());
+
+        // Handy for invite links: auto-open login if invite_token is present.
+        window.netlifyIdentity.on('init', (user) => {
+          if (!user) {
+            const params = new URLSearchParams(window.location.search);
+            if (params.has('invite_token')) {
+              window.netlifyIdentity.open('login');
+            }
+          }
+        });
+      }
     </script>
     <script src="https://unpkg.com/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
     <script src="https://unpkg.com/decap-cms@^3.0.16/dist/decap-cms.js"></script>
@@ -90,4 +116,3 @@
     </script>
   </body>
 </html>
-
