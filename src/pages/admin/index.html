@@ -14,11 +14,14 @@
     </button>
     <script>
       // Detect local development (Astro dev server or netlify dev on localhost)
-      const isLocal = window.location.hostname === 'localhost' || 
-                      window.location.hostname === '127.0.0.1' ||
-                      window.location.hostname.includes('localhost');
+      const isLocalHost = window.location.hostname === 'localhost' || 
+                          window.location.hostname === '127.0.0.1' ||
+                          window.location.hostname.includes('localhost');
+      // Treat Astro's dev server (e.g. :4321) as "local GitHub backend".
+      // Netlify Dev defaults to :8888 and should behave like production (git-gateway).
+      const useGithubBackend = isLocalHost && window.location.port !== '8888';
       
-      if (isLocal) {
+      if (useGithubBackend) {
         // For local development, use GitHub backend (no Netlify Identity needed)
         // This allows login without setting up Netlify Identity locally
         window.CMS_MANUAL_INIT = true;
@@ -64,11 +67,12 @@
     <script src="https://unpkg.com/decap-cms@^3.0.16/dist/decap-cms.js"></script>
     <script>
       (function() {
-        const isLocal = window.location.hostname === 'localhost' || 
-                        window.location.hostname === '127.0.0.1' ||
-                        window.location.hostname.includes('localhost');
-        
-        if (isLocal && window.CMS && window.jsyaml) {
+        const isLocalHost = window.location.hostname === 'localhost' || 
+                            window.location.hostname === '127.0.0.1' ||
+                            window.location.hostname.includes('localhost');
+        const useGithubBackend = isLocalHost && window.location.port !== '8888';
+
+        if (useGithubBackend && window.CMS && window.jsyaml) {
           // Wait a bit to ensure CMS is fully loaded
           setTimeout(() => {
             // Load config and override backend for local dev
