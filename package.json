@@ -9,7 +9,7 @@
     "postbuild": "pagefind --site dist",
     "preview": "astro preview",
     "astro": "astro",
-    "generate:data": "node ./scripts/build-experiment-index.mjs"
+    "generate:data": "node ./scripts/build-posts-index.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.0",

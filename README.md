@@ -56,7 +56,7 @@ builds on Netlify continue to use the adapter with no extra configuration.
 
 ### Logging and Netlify
 
-- `scripts/build-experiment-index.mjs` emits a slug → experiment map which the
+- `scripts/build-posts-index.mjs` emits a slug → experiment map which the
   Edge middleware imports.
 - `netlify/edge-functions/logging.ts` runs on every request (`netlify.toml`
   wires it to `/*`). It assigns an `X-Request-Id`, optionally delays the
