@@ -1,4 +1,5 @@
 import { defineCollection, z } from "astro:content";
+import { CATEGORIES } from "../data/categories";
 
 const posts = defineCollection({
   type: "content",
@@ -8,7 +9,7 @@ const posts = defineCollection({
       description: z.string(),
       date: z.coerce.date(),
       updated: z.coerce.date().optional(),
-      category: z.string(),
+      category: z.enum(CATEGORIES),
       tags: z.array(z.string()).default([]),
       author: z.string().default("Signal North Team"),
       indexable: z.boolean().default(true),
@@ -22,6 +23,7 @@ const posts = defineCollection({
       image_alt: z.string().optional(),
       video_url: z.string().optional().nullable(),
       json_ld: z.any().optional(),
+      draft: z.boolean().default(false),
     }),
 });
 

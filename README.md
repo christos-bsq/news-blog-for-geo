@@ -1,4 +1,4 @@
-# Signal North Daily — Astro microblog for GEO/AEO experiments
+# Signal North Daily — Astro microblog for GEO/AEO posts
 
 This project starts from
 [michael-andreuzza/microblog](https://github.com/michael-andreuzza/microblog)
@@ -11,12 +11,28 @@ posts, Netlify CMS, Netlify Edge logging, and sitemap/robots management.
 ```bash
 npm install
 npm run dev
+npm run build
 ```
 
 Both `npm run dev` and `npm run build` run `npm run generate:data` first. That
 script scans every Markdown file under `src/content/posts/`, produces
 `public/experiment-index.json`, and mirrors it to the Netlify Edge bundle so the
 logging middleware knows the experiment settings per slug.
+
+### Local builds and the Netlify adapter
+
+The theme now uses the Netlify adapter so deploys can opt into SSR/middleware. On
+local machines the adapter tries to move generated assets between two different
+volumes (`.netlify/build/_astro` → `dist/_astro`), which fails with
+`EXDEV: cross-device link not permitted`. To avoid that during local builds,
+prefix your build command with:
+
+```bash
+SKIP_NETLIFY_ADAPTER=true npm run build
+```
+
+Our `astro.config.mjs` already checks this environment variable, so production
+builds on Netlify continue to use the adapter with no extra configuration.
 
 ## Content authoring
 
@@ -40,7 +56,7 @@ logging middleware knows the experiment settings per slug.
 
 ### Logging and Netlify
 
-- `scripts/build-experiment-index.mjs` emits a slug → experiment map which the
+- `scripts/build-posts-index.mjs` emits a slug → experiment map which the
   Edge middleware imports.
 - `netlify/edge-functions/logging.ts` runs on every request (`netlify.toml`
   wires it to `/*`). It assigns an `X-Request-Id`, optionally delays the

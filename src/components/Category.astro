@@ -1,0 +1,25 @@
+---
+import { cn } from '@/utils'
+import { slugify } from '@/utils/slugify'
+
+const { name = 'View All', activeCategory } = Astro.props as { name?: string; activeCategory?: string }
+const currentPath = Astro.url.pathname
+const normalizedName = slugify(name.toLowerCase())
+
+const isActive =
+	(activeCategory && activeCategory === normalizedName) ||
+	(!activeCategory && currentPath === '/' && name === 'View All')
+
+const href = name === 'View All' ? '/' : `/category/${normalizedName}/1`
+---
+
+<a
+	href={href}
+	class={cn(
+		`text-gray-600 dark:text-gray-300  pb-2.5 first-letter:uppercase font-medium hover:text-gray-800 border-b-2 border-opacity-0 dark:border-opacity-0 border-black dark:border-white dark:hover:border-white hover:border-opacity-100 transition-colors duration-150 ease-linear  `,
+		isActive &&
+			`border-black border-b-2 text-black z-10  dark:border-white dark:text-white dark:border-opacity-100 border-opacity-100`
+	)}
+>
+	{name}
+</a>
