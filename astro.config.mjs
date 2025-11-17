@@ -1,8 +1,9 @@
 import { defineConfig } from "astro/config";
-import tailwindcss from "@tailwindcss/vite";
+import { fileURLToPath } from "node:url";
 import sitemap from "@astrojs/sitemap";
 import mdx from "@astrojs/mdx";
 import netlify from "@astrojs/netlify";
+import tailwind from "@astrojs/tailwind";
 
 const isPreviewCommand =
   // The Netlify adapter does not implement `astro preview`, so skip it there.
@@ -13,9 +14,6 @@ export default defineConfig({
   site: "https://signal-north-daily.netlify.app",
   ...(isPreviewCommand ? {} : { adapter: netlify() }),
   output: "static",
-  vite: {
-    plugins: [tailwindcss()],
-  },
   markdown: {
     drafts: true,
     shikiConfig: {
@@ -27,5 +25,13 @@ export default defineConfig({
     skipInline: false,
     drafts: true,
   },
-  integrations: [sitemap(), mdx()],
+  integrations: [sitemap(), mdx(), tailwind()],
+  vite: {
+    resolve: {
+      alias: {
+        "@": fileURLToPath(new URL("./src", import.meta.url)),
+      },
+      extensions: [".mjs", ".js", ".ts", ".jsx", ".tsx", ".json", ".astro"],
+    },
+  },
 });

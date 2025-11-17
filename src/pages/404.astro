@@ -1,5 +1,20 @@
 ---
-import BaseLayout from "@/layouts/BaseLayout.astro";
+import BaseLayout from '@/layouts/BaseLayout'
 ---
-<BaseLayout>
+
+<BaseLayout title='Page not found'>
+	<section class='flex min-h-[50vh] flex-col items-center justify-center gap-4 text-center'>
+		<p class='text-sm uppercase tracking-[0.4em] text-indigo-500'>404</p>
+		<h1 class='text-4xl font-semibold text-zinc-900 dark:text-white'>This post is missing</h1>
+		<p class='max-w-xl text-base text-zinc-600 dark:text-zinc-300'>
+			The URL you requested doesn't exist. Double-check the slug or head back to the homepage to browse the latest
+			posts.
+		</p>
+		<a
+			href='/'
+			class='mt-4 inline-flex items-center rounded-full border border-indigo-600 px-6 py-3 text-sm font-semibold uppercase tracking-wide text-indigo-600 transition hover:bg-indigo-600 hover:text-white dark:border-indigo-400 dark:text-indigo-300 dark:hover:bg-indigo-400 dark:hover:text-[#0a0910]'
+		>
+			Back to home
+		</a>
+	</section>
 </BaseLayout>

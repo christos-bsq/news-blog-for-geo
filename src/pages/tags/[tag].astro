@@ -1,40 +1,28 @@
 ---
-import type { CollectionEntry } from "astro:content";
-import { getCollection } from "astro:content";
-import BaseLayout from "@/layouts/BaseLayout.astro";
-import PostCard from "@/components/PostCard.astro";
-import { sortPosts } from "@/lib/postHelpers";
+import BaseLayout from '@/layouts/BaseLayout'
+import TitlePage from '@/components/TitlePage'
+import ListPosts from '@/components/ListPosts'
+import ListCategories from '@/components/ListCategories'
+import { getPostsByTag, getTags } from '@/utils'
 
 export async function getStaticPaths() {
-  const allPosts = await getCollection("posts");
-  const uniqueTags = [...new Set(allPosts.map((post) => post.data.tags).flat())];
-
-  return uniqueTags.map((tag) => {
-    const filtered = allPosts.filter((post) => post.data.tags?.includes(tag));
-    return {
-      params: { tag },
-      props: {
-        tag,
-        posts: sortPosts(filtered),
-      },
-    };
-  });
+	const tags = await getTags()
+	return tags.map((tag) => ({
+		params: { tag }
+	}))
 }
 
-const { tag, posts } = Astro.props as {
-  tag: string;
-  posts: CollectionEntry<"posts">[];
-};
+const params = Astro.params
+const tag = params.tag ?? ''
+const posts = await getPostsByTag(tag)
 ---
 
-<BaseLayout title={`#${tag} | Signal North Daily`} description={`Articles filed under #${tag}.`}>
-  <section class="space-y-4">
-    <h1 class="text-4xl font-semibold text-base-900">#{tag}</h1>
-    <p class="text-base text-base-600">{posts.length} posts mention this tag.</p>
-  </section>
-  <div class="mt-8 grid gap-6 md:grid-cols-2">
-    {posts.map((post) => (
-      <PostCard post={post} />
-    ))}
-  </div>
+<BaseLayout title={`Tag: #${tag}`}>
+	<TitlePage title={`#${tag}`} />
+	<ListCategories />
+	{posts.length > 0 ? (
+		<ListPosts posts={posts} />
+	) : (
+		<p class='text-center text-sm text-zinc-500'>No posts have been tagged with #{tag} yet.</p>
+	)}
 </BaseLayout>
