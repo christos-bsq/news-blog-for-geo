@@ -2,7 +2,6 @@
 import type { CollectionEntry } from 'astro:content'
 import FormattedDate from '@/components/FormattedDate'
 import ArrowUp from '@/components/icons/ArrowUp'
-import ExperimentChips from '@/components/ExperimentChips.astro'
 import { getPostSlug } from '@/utils'
 
 type Props = {
@@ -43,15 +42,7 @@ const categoryLabel = data.category
 			</a>
 			<p class='line-clamp-3 text-base text-zinc-600 dark:text-zinc-300'>{data.description}</p>
 		</div>
-		<ExperimentChips
-			renderMode={data.render_mode}
-			experimentType={data.experiment_type}
-			serverDelay={data.server_delay_ms}
-			clientDelay={data.client_delay_ms}
-			className='mt-auto'
-		/>
-
-		<footer class='flex justify-between items-center pt-2'>
+		<footer class='mt-auto flex justify-between items-center pt-2'>
 			<a
 				href={href}
 				class='flex items-center text-sm font-semibold uppercase tracking-wide text-indigo-600 transition hover:translate-x-1 dark:text-indigo-400'

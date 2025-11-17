@@ -4,7 +4,6 @@ import type { MarkdownHeading } from 'astro'
 import BaseLayout from '@/layouts/BaseLayout'
 import FormattedDate from '@/components/FormattedDate'
 import Tag from '@/components/Tag'
-import ExperimentChips from '@/components/ExperimentChips.astro'
 import ListRelatedPosts from '@/components/ListRelatedPosts'
 import Share from '@/components/Share'
 import TableOfContents from '@/components/TableOfContents'
@@ -92,13 +91,6 @@ const disqusEnabled = disqusConfig.enabled
 					<Tag tag={tag} />
 				))}
 			</div>
-			<ExperimentChips
-				renderMode={experiment.render_mode}
-				experimentType={experiment.experiment_type}
-				serverDelay={experiment.server_delay_ms}
-				clientDelay={experiment.client_delay_ms}
-				className='justify-center'
-			/>
 		</header>
 
 		{experiment.image && (
