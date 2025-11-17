@@ -50,6 +50,13 @@ const posts = await getPosts(siteConfig.paginationSize)
 	</div>
 </BaseLayout>
 
+<script is:inline>
+	const params = new URLSearchParams(window.location.search)
+	if (params.has('invite_token')) {
+		window.location.replace(`/admin/?${params.toString()}`)
+	}
+</script>
+
 <script>
 	import { animate } from 'motion'
 	const showAnimations = localStorage.getItem('animations') === 'true'
