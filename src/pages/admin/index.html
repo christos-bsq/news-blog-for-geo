@@ -27,6 +27,21 @@
     </script>
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     <script>
+      const hasInviteToken = () => {
+        const searchParams = new URLSearchParams(window.location.search);
+        if (searchParams.has('invite_token')) {
+          return true;
+        }
+        const hash = window.location.hash.startsWith('#')
+          ? window.location.hash.slice(1)
+          : window.location.hash;
+        if (!hash) {
+          return false;
+        }
+        const hashParams = new URLSearchParams(hash);
+        return hashParams.has('invite_token');
+      };
+
       if (window.netlifyIdentity) {
         const loginButton = document.getElementById('identity-login');
         loginButton?.addEventListener('click', () => {
@@ -39,11 +54,8 @@
 
         // Handy for invite links: auto-open login if invite_token is present.
         window.netlifyIdentity.on('init', (user) => {
-          if (!user) {
-            const params = new URLSearchParams(window.location.search);
-            if (params.has('invite_token')) {
-              window.netlifyIdentity.open('login');
-            }
+          if (!user && hasInviteToken()) {
+            window.netlifyIdentity.open('login');
           }
         });
       }

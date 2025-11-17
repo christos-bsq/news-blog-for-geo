@@ -51,8 +51,21 @@ const posts = await getPosts(siteConfig.paginationSize)
 </BaseLayout>
 
 <script is:inline>
-	const params = new URLSearchParams(window.location.search)
-	if (params.has('invite_token')) {
+	const findInviteParams = () => {
+		const searchParams = new URLSearchParams(window.location.search)
+		if (searchParams.has('invite_token')) {
+			return searchParams
+		}
+		const hash = window.location.hash.startsWith('#') ? window.location.hash.slice(1) : window.location.hash
+		if (!hash) {
+			return null
+		}
+		const hashParams = new URLSearchParams(hash)
+		return hashParams.has('invite_token') ? hashParams : null
+	}
+
+	const params = findInviteParams()
+	if (params) {
 		window.location.replace(`/admin/?${params.toString()}`)
 	}
 </script>
