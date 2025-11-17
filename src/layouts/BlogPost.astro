@@ -21,28 +21,28 @@ type Props = {
 }
 
 const { post, Content, headings, readTime, htmlForClient } = Astro.props as Props
-const experiment = post.data
+const postData = post.data
 const slug = getPostSlug(post)
-const isSSR = experiment.render_mode === 'ssr'
-const isMixed = experiment.render_mode === 'mixed'
-const isJSOnly = experiment.render_mode === 'js-only'
+const isSSR = postData.render_mode === 'ssr'
+const isMixed = postData.render_mode === 'mixed'
+const isJSOnly = postData.render_mode === 'js-only'
 const safePayload = JSON.stringify({ html: htmlForClient ?? '' }).replace(/<\/(script)/gi, '<\\/$1>')
-const published = experiment.date
-const updated = experiment.updated
+const published = postData.date
+const updated = postData.updated
 const articleDate = published.toISOString()
 
 const canonicalUrl = Astro.site ? new URL(`/post/${slug}/`, Astro.site).href : null
 
 let jsonLdString: string | null = null
-if (experiment.json_ld) {
-	if (typeof experiment.json_ld === 'string') {
+if (postData.json_ld) {
+	if (typeof postData.json_ld === 'string') {
 		try {
-			jsonLdString = JSON.stringify(JSON.parse(experiment.json_ld))
+			jsonLdString = JSON.stringify(JSON.parse(postData.json_ld))
 		} catch {
-			jsonLdString = experiment.json_ld
+			jsonLdString = postData.json_ld
 		}
 	} else {
-		jsonLdString = JSON.stringify(experiment.json_ld)
+		jsonLdString = JSON.stringify(postData.json_ld)
 	}
 }
 
@@ -51,18 +51,18 @@ const disqusEnabled = disqusConfig.enabled
 ---
 
 <BaseLayout
-	title={`${experiment.title} | ${experiment.category}`}
-	description={experiment.description}
-	image={experiment.image}
+	title={`${postData.title} | ${postData.category}`}
+	description={postData.description}
+	image={postData.image}
 	articleDate={articleDate}
 	canonical={canonicalUrl}
-	indexable={experiment.indexable}
+	indexable={postData.indexable}
 >
 	<article class='min-w-full py-6'>
 		<header class='flex flex-col gap-6 text-center'>
 			<div class='flex flex-col gap-2 text-sm text-zinc-500 dark:text-zinc-400'>
 				<div class='flex flex-col items-center justify-center gap-2 text-xs md:flex-row md:gap-4'>
-					<span class='uppercase tracking-[0.4em] text-indigo-500'>{experiment.category}</span>
+					<span class='uppercase tracking-[0.4em] text-indigo-500'>{postData.category}</span>
 					<ul class='flex flex-wrap items-center justify-center gap-2 uppercase tracking-wide text-zinc-500 dark:text-zinc-400'>
 						<li class='flex items-center gap-1'>
 							<span>Published</span>
@@ -83,26 +83,26 @@ const disqusEnabled = disqusConfig.enabled
 				)}
 			</div>
 			<h1 class='text-4xl font-semibold leading-tight text-zinc-900 dark:text-white md:text-6xl'>
-				{experiment.title}
+				{postData.title}
 			</h1>
-			<p class='text-lg text-zinc-600 dark:text-zinc-300 md:text-xl'>{experiment.description}</p>
+			<p class='text-lg text-zinc-600 dark:text-zinc-300 md:text-xl'>{postData.description}</p>
 			<div class='flex flex-wrap justify-center gap-3'>
-				{experiment.tags.map((tag) => (
+				{postData.tags.map((tag) => (
 					<Tag tag={tag} />
 				))}
 			</div>
 		</header>
 
-		{experiment.image && (
+		{postData.image && (
 			<img
-				src={experiment.image}
-				alt={experiment.image_alt ?? experiment.title}
+				src={postData.image}
+				alt={postData.image_alt ?? postData.title}
 				class='my-8 h-full w-full rounded-3xl object-cover shadow-lg'
 				loading='lazy'
 			/>
 		)}
 
-		<VideoEmbed url={experiment.video_url} />
+		<VideoEmbed url={postData.video_url} />
 
 			<section class='mt-10 grid grid-cols-1 gap-10 md:grid-cols-[280px_1fr]'>
 				<aside class='flex flex-col gap-8'>
@@ -125,15 +125,15 @@ const disqusEnabled = disqusConfig.enabled
 					<div class='space-y-4'>
 						<div class='rounded-3xl border border-zinc-200 bg-zinc-50 p-5 text-sm text-zinc-600 dark:border-zinc-700 dark:bg-[#15141f] dark:text-zinc-300'>
 							<p class='font-semibold text-zinc-900 dark:text-white'>SSR intro</p>
-							<p class='mt-2'>{experiment.description}</p>
+							<p class='mt-2'>{postData.description}</p>
 						</div>
 						<div
 							id='article-js'
 							class='prose prose-lg max-w-none text-zinc-800 dark:prose-invert'
 							data-slug={slug}
-							data-experiment-type={experiment.experiment_type}
-							data-client-delay-ms={experiment.client_delay_ms ?? 0}
-							data-render-mode={experiment.render_mode}
+							data-experiment-type={postData.experiment_type}
+							data-client-delay-ms={postData.client_delay_ms ?? 0}
+							data-render-mode={postData.render_mode}
 						></div>
 					</div>
 				)}
@@ -148,16 +148,16 @@ const disqusEnabled = disqusConfig.enabled
 							id='article-js'
 							class='prose prose-lg max-w-none text-zinc-800 dark:prose-invert'
 							data-slug={slug}
-							data-experiment-type={experiment.experiment_type}
-							data-client-delay-ms={experiment.client_delay_ms ?? 0}
-							data-render-mode={experiment.render_mode}
+							data-experiment-type={postData.experiment_type}
+							data-client-delay-ms={postData.client_delay_ms ?? 0}
+							data-render-mode={postData.render_mode}
 						></div>
 					</div>
 				)}
 
 				{(isMixed || isJSOnly) && (
 					<>
-						<script type='application/json' id='post-content' data-slug={slug} data-render-mode={experiment.render_mode}>
+						<script type='application/json' id='post-content' data-slug={slug} data-render-mode={postData.render_mode}>
 							{safePayload}
 						</script>
 						<script is:inline type='module'>
